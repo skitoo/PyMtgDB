@@ -41,6 +41,12 @@ class Card(object):
         self.formats = [Format(_) for _ in data["formats"]]
         self.released_at = datetime.datetime.strptime(data["releasedAt"], '%Y-%m-%d')
 
+    def get_image_url(self):
+        return '%s/content/card_images/%s.jpeg' % (BASE_URL_SERVICE, self.id)
+
+    def get_hd_image_url(self):
+        return '%s/content/hi_res_card_images/%s.jpg' % (BASE_URL_SERVICE, self.id)
+
     def __str__(self):
         return u'Card: %s' % self.name
 
@@ -121,7 +127,7 @@ class MtgDB(object):
         data = requests.get('%s/cards/%s' % (BASE_URL_SERVICE, urllib.quote(name))).json()
         return [Card(_) for _ in data] if data else None
 
-    def get_cards(self, ids):
+    def get_cards(self, ids=[]):
         data = requests.get('%s/cards/%s' % (BASE_URL_SERVICE, ','.join(map(lambda id: str(id), ids)))).json()
         return [Card(_) for _ in data] if data else None
 
