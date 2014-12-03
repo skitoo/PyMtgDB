@@ -5,6 +5,11 @@ import requests
 import datetime
 import urllib
 
+
+__author__ = u'Alexis Couronne <www.skitoo.net>'
+__version__ = '0.1.0'
+
+
 RED = u'red'
 GREEN = u'green'
 BLUE = u'blue'
