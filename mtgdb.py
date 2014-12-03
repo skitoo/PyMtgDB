@@ -155,7 +155,16 @@ class MtgDB(object):
         return requests.get('%s/cards/rarity' % (BASE_URL_SERVICE)).json()
 
     def search(self, text, start=0, limit=0, is_complex=False):
-        pass
+        if is_complex:
+            url = '%s/search/?%s' % (BASE_URL_SERVICE, urllib.urlencode({'q': text, 'start': start, 'limit': limit}))
+        else:
+            url = '%s/search/%s?%s' % (
+                BASE_URL_SERVICE,
+                urllib.quote(text),
+                urllib.urlencode({'start': start, 'limit': limit})
+            )
+        data = requests.get(url).json()
+        return [Card(_) for _ in data] if data else None
 
     def filter_cards(self, **kwargs):
         data = requests.get('%s/cards?%s' % (BASE_URL_SERVICE, urllib.urlencode(kwargs))).json()
