@@ -39,7 +39,10 @@ class Card(object):
         self.promo = data["promo"]
         self.rulings = [Ruling(_) for _ in data["rulings"]]
         self.formats = [Format(_) for _ in data["formats"]]
-        self.released_at = datetime.datetime.strptime(data["releasedAt"], '%Y-%m-%d')
+        if data["releasedAt"] is not None:
+            self.released_at = datetime.datetime.strptime(data["releasedAt"], '%Y-%m-%d')
+        else:
+            self.released_at = None
 
     def get_image_url(self):
         return '%s/content/card_images/%s.jpeg' % (BASE_URL_SERVICE, self.id)
@@ -91,7 +94,10 @@ class CardSet(object):
         self.mythic_rare_count = data["mythicRare"]
         self.basic_land_count = data["basicLand"]
         self.total_cards = data["total"]
-        self.release_date = datetime.datetime.strptime(data["releasedAt"], '%Y-%m-%d') if data["releasedAt"] is not None else None
+        if data["releasedAt"] is not None:
+            self.release_date = datetime.datetime.strptime(data["releasedAt"], '%Y-%m-%d')
+        else:
+            self.release_date = None
         self.card_ids = data["cardIds"]
 
     @property
@@ -147,3 +153,10 @@ class MtgDB(object):
 
     def get_card_rarity(self):
         return requests.get('%s/cards/rarity' % (BASE_URL_SERVICE)).json()
+
+    def search(self, text, start=0, limit=0, is_complex=False):
+        pass
+
+    def filter_cards(self, **kwargs):
+        data = requests.get('%s/cards?%s' % (BASE_URL_SERVICE, urllib.urlencode(kwargs))).json()
+        return [Card(_) for _ in data] if data else None
